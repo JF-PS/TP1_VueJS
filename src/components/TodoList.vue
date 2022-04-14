@@ -2,15 +2,13 @@
   <div>
     <h1 id="title">My Current List :</h1>
 
-    <ul v-for="todo in list" :key="todo">
+    <ul v-for="(todo, index) in list" :key="todo">
       <li>
-        <div id="container">
-          <div>{{ todo.task }}</div>
-          <div>{{ todo.hours }}</div>
-          <div>{{ todo.manager }}</div>
-          <div><button class="button">Update</button></div>
-          <div><button class="button">Delete</button></div>
-        </div>
+        {{ todo.task }} - {{ todo.hours }} - {{ todo.manager }}
+        <button class="button" v-on:click="onEditTodo(todo, index)">
+          Edit
+        </button>
+        <button class="button" v-on:click="onDeleteTodo(index)">Delete</button>
       </li>
     </ul>
   </div>
@@ -21,6 +19,14 @@ export default {
   name: "TodoList",
   props: {
     list: Array,
+  },
+  methods: {
+    onEditTodo(editTodo, index) {
+      this.$emit("onEditTodo", { data: editTodo, index });
+    },
+    onDeleteTodo(index) {
+      this.$emit("onDeleteTodo", index);
+    },
   },
 };
 </script>

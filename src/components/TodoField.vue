@@ -16,29 +16,61 @@
       </template>
     </select>
 
-    <button v-on:click="onSubmit()" class="button">Add</button>
+    <button v-on:click="onSubmit()" class="button">
+      {{ !isUpdate ? "Add" : "Update" }}
+    </button>
   </div>
 </template>
 
 <script>
+import { isEmpty } from "lodash";
 export default {
   name: "TodoField",
   props: {
-    managers: [],
-    currentTodo: { task: "", hours: 1, manager: "Morgane" },
+    managers: {
+      type: Array,
+      required: true,
+    },
+    currentTodo: {
+      type: Object,
+      required: false,
+    },
   },
   data() {
     return {
-      myTodo: this.currentTodo,
+      myTodo: {},
+      isUpdate: false,
     };
+  },
+  mounted() {
+    this.initData();
   },
   methods: {
     onSubmit: function () {
       if (this.myTodo.task === "") {
         alert("Un des champs est vide !!!");
       } else {
-        this.$emit("onAddTodo", this.myTodo);
+        const name = !this.isUpdate ? "onAddTodo" : "onUpdateTodo";
+        this.$emit(name, this.myTodo);
+        this.clearTodo();
       }
+    },
+    initData() {
+      if (!isEmpty(this.currentTodo)) {
+        this.myTodo = { ...this.currentTodo };
+        this.isUpdate = true;
+      } else {
+        this.clearTodo();
+      }
+    },
+    clearTodo() {
+      this.myTodo = { task: "", hours: 1, manager: "Morgane" };
+      this.isUpdate = false;
+    },
+  },
+  watch: {
+    currentTodo() {
+      this.initData();
     },
   },
 };
